@@ -1,0 +1,32 @@
+server:
+  port: 8185
+
+spring:
+  application:
+    name: PAYMENT-SERVICE
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/paymentdb
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL57InnoDBDialect
+    hibernate:
+      ddl-auto: update
+
+  #eureka:
+  #  instance:
+  #    prefer-ip-address: true
+  #  client:
+  #    fetch-registry: true
+  #    register-with-eureka: true
+  #    service-url:
+  #      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8182/eureka}
+  #
+
+  config:
+    import: configserver:http://localhost:8184
+
+    #    In the above configuration we are specifying the congif server url

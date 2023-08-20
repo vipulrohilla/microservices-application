@@ -1,0 +1,64 @@
+server:
+  port: 8183
+
+spring:
+  application:
+    name: ORDER-SERVICE
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/orderdb
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL57InnoDBDialect
+    hibernate:
+      ddl-auto: update
+
+
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8182/eureka}
+#
+
+  config:
+    import: configserver:http://localhost:8184
+    #    In the above configuration we are specifying the congif server url
+#    Okta security configuration starts
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-01225541.okta.com/oauth2/default
+      client:
+        registration:
+          internal-client:
+            provider: okta
+            authorizationGrantType: client_credentials
+            scope: internal
+            clientId: 0oaau5jr6seejoMhm5d7
+            clientSecret: aIY5LUEyukX1nZpQBPi5KChR6izROMw7svKSCaFtaAfYTOlhPFB9DqIh0mguHTAc
+        provider:
+          okta:
+            issuerUri: https://dev-01225541.okta.com/oauth2/default
+#    Okta security configuration ends
+
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      external:
+        event-consumer-buffer-size: 10
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 5
+        automatic-transaction-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
